@@ -173,7 +173,7 @@
 
     <!-- Modal de Login / Registro -->
     <div x-show="showLoginModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 relative border border-slate-100">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-sm p-5 relative border border-slate-100 max-h-[90vh] overflow-y-auto">
             
             <button @click="showLoginModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 font-bold text-xl">&times;</button>
 
@@ -183,16 +183,34 @@
                 <button type="button" @click="authMode = 'register'" :class="authMode === 'register' ? 'border-b-2 border-[#23429B] font-bold text-[#23429B]' : 'text-slate-400'" class="flex-1 py-2 text-center text-xs sm:text-sm">Cadastrar</button>
             </div>
 
+            <!-- Exibição de Erros Gerais (ex: Credenciais Inválidas) -->
+            @if ($errors->any())
+                <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                    <p class="text-xs font-semibold text-red-600 mb-1">Atenção:</p>
+                    <ul class="list-disc list-inside text-[11px] text-red-500 space-y-0.5">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <!-- Formulário Login -->
             <form x-show="authMode === 'login'" method="POST" action="{{ route('login') }}" class="space-y-3">
                 @csrf
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">E-mail</label>
-                    <input type="email" name="email" value="{{ old('email') }}" placeholder="seu.email@exemplo.com" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-[#23429B]">
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="seu.email@exemplo.com" required class="w-full bg-slate-50 border @error('email') border-red-500 @else border-slate-200 @enderror rounded-lg p-2.5 text-xs focus:outline-none focus:border-[#23429B]">
+                    @error('email')
+                        <span class="text-[10px] text-red-500 font-medium mt-0.5 block">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 mb-1">Senha</label>
-                    <input type="password" name="password" placeholder="••••••••" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2.5 text-xs focus:outline-none focus:border-[#23429B]">
+                    <input type="password" name="password" placeholder="Mínimo 8 dígitos" minlength="8" required class="w-full bg-slate-50 border @error('password') border-red-500 @else border-slate-200 @enderror rounded-lg p-2.5 text-xs focus:outline-none focus:border-[#23429B]">
+                    @error('password')
+                        <span class="text-[10px] text-red-500 font-medium mt-0.5 block">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="pt-2">
                     <button type="submit" class="w-full bg-[#23429B] hover:bg-[#1A3275] text-white font-bold py-2.5 rounded-lg text-xs transition shadow-sm">Entrar</button>
@@ -204,34 +222,49 @@
                 @csrf
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Nome Completo</label>
-                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Ex: João Silva" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Ex: João Silva" required class="w-full bg-slate-50 border @error('name') border-red-500 @else border-slate-200 @enderror rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    @error('name')
+                        <span class="text-[10px] text-red-500 font-medium block mt-0.5">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Nome de Usuário</label>
-                    <input type="text" name="username" value="{{ old('username') }}" placeholder="Ex: joaosilva" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    <input type="text" name="username" value="{{ old('username') }}" placeholder="Ex: joaosilva" required class="w-full bg-slate-50 border @error('username') border-red-500 @else border-slate-200 @enderror rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    @error('username')
+                        <span class="text-[10px] text-red-500 font-medium block mt-0.5">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">E-mail</label>
-                    <input type="email" name="email" value="{{ old('email') }}" placeholder="exemplo@dominio.com" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    <input type="email" name="email" value="{{ old('email') }}" placeholder="exemplo@dominio.com" required class="w-full bg-slate-50 border @error('email') border-red-500 @else border-slate-200 @enderror rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    @error('email')
+                        <span class="text-[10px] text-red-500 font-medium block mt-0.5">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Tipo de Perfil</label>
                     <select name="role" class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]" required>
-                        <option value="usuario">Visitante / Aluno</option>
-                        <option value="fotografo">Fotógrafo</option>
+                        <option value="usuario" {{ old('role') === 'usuario' ? 'selected' : '' }}>Visitante / Aluno</option>
+                        <option value="fotografo" {{ old('role') === 'fotografo' ? 'selected' : '' }}>Fotógrafo</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Senha</label>
-                    <input type="password" name="password" placeholder="••••••••" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    <input type="password" name="password" placeholder="Mínimo 8 dígitos" minlength="8" required class="w-full bg-slate-50 border @error('password') border-red-500 @else border-slate-200 @enderror rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    @error('password')
+                        <span class="text-[10px] text-red-500 font-medium block mt-0.5">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Confirmar Senha</label>
-                    <input type="password" name="password_confirmation" placeholder="••••••••" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
+                    <input type="password" name="password_confirmation" placeholder="Mínimo 8 dígitos" minlength="8" required class="w-full bg-slate-50 border border-slate-200 rounded-lg p-2 text-xs focus:outline-none focus:border-[#23429B]">
                 </div>
                 <div>
                     <label class="block text-[11px] font-semibold text-slate-600 mb-0.5">Foto de Perfil</label>
                     <input type="file" name="avatar" accept="image/*" class="w-full text-[11px] text-slate-500">
+                    @error('avatar')
+                        <span class="text-[10px] text-red-500 font-medium block mt-0.5">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="pt-2">
                     <button type="submit" class="w-full bg-[#E95378] hover:bg-[#D43F64] text-white font-bold py-2.5 rounded-lg text-xs transition shadow-sm">Criar Conta</button>
@@ -247,7 +280,7 @@
                 <span class="bg-[#23429B] text-white px-1.5 py-0.5 rounded text-[10px] font-bold">SENAI</span>
                 <span class="font-medium text-slate-700">Mundo SENAI • Curso Técnico em Informática</span>
             </div>
-            <span>© SAEPVision</span>
+            <span>SENAI</span>
         </div>
     </footer>
 
