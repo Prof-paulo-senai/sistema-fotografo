@@ -6,6 +6,7 @@ use App\Models\Publication;
 use App\Models\Like;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
@@ -70,17 +71,14 @@ class GalleryController extends Controller
     {
         $userId = auth()->id();
 
-        // Verifica se o usuário já curtiu esta publicação
         $like = Like::where('publication_id', $publication->id)
                     ->where('user_id', $userId)
                     ->first();
 
         if ($like) {
-            // Se já curtiu, remove o curtida (Unlike)
             $like->delete();
             $isLiked = false;
         } else {
-            // Se não curtiu, cria o registro de curtida (Like)
             Like::create([
                 'user_id' => $userId,
                 'publication_id' => $publication->id,
@@ -88,10 +86,28 @@ class GalleryController extends Controller
             $isLiked = true;
         }
 
-        // Retorna a contagem atualizada de curtidas e o status para o Alpine.js
         return response()->json([
             'is_liked' => $isLiked,
             'likes_count' => $publication->likes()->count(),
         ]);
     }
+
+    public function destroy($id)
+    {
+        $photo = Publication::findOrFail($id);
+
+        if (auth()->user()->role === 'admin' || auth()->id() === $photo->user_id) {
+            
+            if ($photo->image_path && Storage::disk('public')->exists($photo->image_path)) {
+                Storage::disk('public')->delete($photo->image_path);
+            }
+
+            $photo->delete();
+
+            return response()->json(['message' => 'Foto excluída com sucesso!']);
+        }
+
+        return response()->json(['message' => 'Acesso não autorizado.'], 403);
+    }
+
 }

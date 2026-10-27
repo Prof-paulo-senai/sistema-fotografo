@@ -17,6 +17,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/publicar', [GalleryController::class, 'store']);
     Route::post('/photos/{publication}/like', [GalleryController::class, 'toggleLike']);
+    Route::delete('/photos/{id}', [GalleryController::class, 'destroy'])->name('photos.destroy');
 });
 
 require __DIR__.'/auth.php';
