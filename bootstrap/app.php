@@ -18,4 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->shouldRenderJsonWhen(
             fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
         );
-    })->create();
+    })
+    ->booted(function () {
+        app()->setLocale('pt_BR');
+    })
+    ->create();
